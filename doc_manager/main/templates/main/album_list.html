@@ -1,0 +1,58 @@
+{% load static %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<select id="customer-filter" class="form-select">
+  <option value="">Все заказчики</option>
+  {% for customer in customers %}
+    <option value="{{ customer.id }}">{{ customer.name }}</option>
+  {% endfor %}
+</select>
+<select id="object-filter" class="form-select">
+  <option value="">Все объекты</option>
+  {% for object in objects %}
+    <option value="{{ object.id }}">{{ object.name }}</option>
+  {% endfor %}
+</select>
+<select id="doc-type-filter" class="form-select">
+  <option value="">Все</option>
+  <option value="1">КЖ</option>
+  <option value="2">КМ</option>
+  <option value="3">АР</option>
+</select>
+
+<table class="table">
+  <thead><tr><th>Заказчик</th><th>Объект</th><th>Наименование</th><th>Тип</th><th>Объем</th><th>Файл</th><th>Инв. №</th></tr></thead>
+  <tbody id="album-table-body"></tbody>
+</table>
+
+<script>
+function loadAlbums() {
+  $.ajax({
+    url: "{% url 'album_data' %}",
+    data: {
+      customer: $('#customer-filter').val(),
+      object: $('#object-filter').val(),
+      doc_type: $('#doc-type-filter').val()
+    },
+    success: function(data) {
+      let html = '';
+      data.forEach(row => {
+        html += `<tr>
+          <td>${row.customer__name}</td>
+          <td>${row.object__name}</td>
+          <td>${row.name}</td>
+          <td>${row.doc_type}</td>
+          <td>${row.volume}</td>
+          <td>${row.filename}</td>
+          <td>${row.inventory_number}</td>
+        </tr>`;
+      });
+      $('#album-table-body').html(html);
+    }
+  });
+}
+
+$('#customer-filter, #object-filter, #doc-type-filter').on('change', loadAlbums);
+$(document).ready(loadAlbums);
+</script>
