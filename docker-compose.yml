@@ -6,23 +6,24 @@ volumes:
 services:
   db:
     image: postgres:15
-    restart: always
-    env_file: ./.env
+    env_file: 
+      - .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+     - "5432:5432"
 
   web:
     build: .
+    restart: always
     command: >
       sh -c "cd doc_manager &&
-            python manage.py makemigrations &&
-            python manage.py migrate &&
-            python manage.py runserver 0.0.0.0:8000"
+      python manage.py migrate && 
+      python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
     depends_on:
       - db
-    env_file: ./.env
-    ports:
-    - "8000:8000"
+    env_file:
+      - .env
 

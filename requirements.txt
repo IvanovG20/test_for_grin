@@ -1,4 +1,4 @@
 Django
 openpyxl
 psycopg2-binary
-environs
+python-dotenv
